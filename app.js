@@ -3,6 +3,8 @@ const express = require('express');
 const expressLayouts = require('express-ejs-layouts');
 const path = require('path');
 
+const errorsController = require('./controllers/errors');
+
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -16,14 +18,12 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('layout', path.join(__dirname, 'views', 'layouts', 'main-layout'));
 app.set('layout extractStyles', true);
 
-const adminData = require('./routes/admin');
+const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 
-app.use('/admin', adminData.routes);
+app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 
-app.use((req, res, next) => {
-  res.status(404).render('404', { pageTitle: 'Page Not Found', path: '404' });
-});
+app.use(errorsController.get404);
 
 app.listen(process.env.PORT ? process.env.PORT : 3000);

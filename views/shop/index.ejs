@@ -19,10 +19,6 @@
                         </div>
                         <div class="card__actions">
                             <button class="btn">Add to Cart</button>
-                            <form action="/admin/delete-product" method="POST">
-                                <input type="hidden" name="product_id" id="product_id" value="<%= product.identifier %>">
-                                <button class="btn">Delete</button>
-                            </form>
                         </div>
                     </article>
                 <% } %>

@@ -1,46 +1,16 @@
 const path = require('path');
 const express = require('express');
-const uuid = require('uuid');
 
-const rootDir = require('../util/path');
+const adminController = require('../controllers/admin');
 
 const router = express.Router();
 
-const products = [];
+router.get('/products', adminController.getProducts);
 
-// /admin/add-product => GET
-router.get('/add-product', (req, res, next) => {
-  res.render('add-product', {
-    pageTitle: 'Add Product',
-    path: '/admin/add-product'
-  });
-});
+router.get('/add-product', adminController.getAddProduct);
 
-// /admin/add-product => POST
-router.post('/add-product', (req, res, next) => {
-  products.push({
-    identifier: uuid.v4(),
-    title: req.body.title,
-    price: req.body.price,
-    description: req.body.description,
-    rating: req.body.rating,
-    imageURL: req.body.imageURL
-  });
-  res.redirect('/');
-});
+router.post('/add-product', adminController.postAddProduct);
 
-// /admin/delete-product => POST
-router.post('/delete-product', (req, res, next) => {
-  const index = products.findIndex(product => product.identifier === req.body.product_id);
-  if (index < 0) {
-    console.log('product not found');
-    res.redirect('/?error=' + encodeURIComponent('UserNotFound'));
-    return res.end();
-  }
+router.post('/delete-product', adminController.postDeleteProduct);
 
-  products.splice(index, 1);
-  res.redirect('/');
-});
-
-exports.routes = router;
-exports.products = products;
+module.exports = router;
