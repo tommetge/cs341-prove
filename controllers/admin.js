@@ -1,7 +1,9 @@
 const Product = require('../models/product');
 
 exports.getAddProduct = (req, res, next) => {
-  res.render('admin/add-product', {
+  res.render('admin/edit-product', {
+    product: new Product(),
+    editing: false,
     pageTitle: 'Add Product',
     path: '/admin/add-product'
   });
@@ -18,16 +20,42 @@ exports.postAddProduct = (req, res, next) => {
   res.redirect('/');
 }
 
-exports.postDeleteProduct = (req, res, next) => {
-  const index = products.findIndex(product => product.identifier === req.body.product_id);
-  if (index < 0) {
-    console.log('product not found');
-    res.redirect('/?error=' + encodeURIComponent('UserNotFound'));
-    return res.end();
-  }
+exports.getEditProduct = (req, res, next) => {
+  const productId = req.params.productId;
+  Product.findById(productId, product => {
+    res.render('admin/edit-product', {
+      product: product,
+      editing: true,
+      pageTitle: 'Edit Product',
+      path: '/admin/edit-product'
+    });
+  });
+}
 
-  products.splice(index, 1);
-  res.redirect('/');
+exports.postEditProduct = (req, res, next) => {
+  const productId = req.params.productId;
+  Product.findById(productId, product => {
+    product.title = req.body.title;
+    product.price = req.body.price;
+    product.description = req.body.description;
+    product.rating = req.body.rating;
+    product.imageURL = req.body.imageURL;
+    product.save();
+    res.redirect('/admin/products');
+  });
+}
+
+exports.postDeleteProduct = (req, res, next) => {
+  const productId = req.params.productId;
+  Product.findById(productId, product => {
+    if (!product) {
+      res.redirect('/?error=' + encodeURIComponent('ProductNotFound'));
+      return res.end();
+    }
+
+    product.delete();
+    res.redirect('/admin/products');
+  });
 }
 
 exports.getProducts = (req, res, next) => {

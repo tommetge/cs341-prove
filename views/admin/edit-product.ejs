@@ -1,0 +1,22 @@
+<link rel="stylesheet" href="/css/forms.css">
+<link rel="stylesheet" href="/css/product.css">
+
+<%- contentFor('body') %>
+    <main>
+        <form class="product-form" action="/admin/<%= editing ? 'edit-product/' + product.uuid : 'add-product' %>" method="POST">
+            <div class="form-control">
+                <label for="title">Title</label>
+                <input type="text" name="title" id="title" value="<%= product.title %>">
+                <label for="price">Price</label>
+                <input type="text" name="price" id="price" value="<%= product.price %>">
+                <label for="description">Description</label>
+                <input type="text" name="description" id="description" value="<%= product.description %>">
+                <label for="rating">Rating</label>
+                <input type="text" name="rating" id="rating" value="<%= product.rating %>">
+                <label for="imageURL">Image URL</label>
+                <input type="text" name="imageURL" id="imageURL" value="<%= product.imageURL %>">
+            </div>
+
+            <button class="btn" type="submit">Save</button>
+        </form>
+    </main>

@@ -1,2 +1,16 @@
 <%- contentFor('body') %>
-  <main></main>
+  <main>
+    <%- products.length == 0 ? "<h1>No Products in Cart!</h1>" : "" %>
+
+    <ul>
+    <% for (product of products) { %>
+      <li>
+        <p><%= product.product.title %> (<%= product.qty %>)</p>
+        <form action="/cart-delete-item" method="POST">
+          <input type="hidden" name="product_id" value="<%= product.product.uuid %>">
+          <button class="btn" type="submit">Delete</button>
+        </form>
+      </li>
+    <% } %>
+    </ul>
+  </main>
