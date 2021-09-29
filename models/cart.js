@@ -62,6 +62,7 @@ module.exports = class Cart {
 					console.log(err);
 					cb(err);
 				});
+				return;
 			}
 			cb(null);
 		});
