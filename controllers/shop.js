@@ -35,22 +35,17 @@ exports.getIndex = (req, res, next) => {
 exports.getCart = (req, res, next) => {
   Cart.getCart(cart => {
     Product.fetchAll(products => {
-      // const filteredProducts = products.filter(product => cart.products.has(product.uuid));
-      // filteredProducts.map(product => { return { product: product, qty: cart.products[product.uuid].qty } });
-      const cartProducts = [];
-      for (product of products) {
-        if (!cart.products.has(product.uuid)) {
-          continue;
-        }
-
-        cartProducts.push({
+      const filteredProducts = products.filter(product => cart.products.has(product.uuid));
+      const myCart = filteredProducts.map(product => {
+        return {
           product: product,
           qty: cart.products.get(product.uuid).qty
-        });
-      }
+        }
+      });
+      myCart.totalPrice = cart.totalPrice;
 
       res.render('shop/cart', {
-        products: cartProducts,
+        products: myCart,
         path: '/cart',
         pageTitle: 'Your Cart'
       });
@@ -58,19 +53,38 @@ exports.getCart = (req, res, next) => {
   });
 }
 
-exports.postCart = (req, res, next) => {
-  const productId = req.body.product_id;
+exports.getModifyCart = (req, res, next) => {
+  const productId = req.query.product_id;
   Product.findById(productId, (product) => {
-    Cart.addProduct(productId, product.price, err => {
-      res.redirect('/cart');
-    });
+    if (req.query.remove == '1') {
+      Cart.removeProduct(productId, err => {
+        res.redirect('/cart');
+      });
+      return;
+    }
+
+    if (req.query.add == '1') {
+      Cart.addProduct(productId, product.price, err => {
+        res.redirect('/cart');
+      }); 
+      return;
+    }
+
+    res.redirect('/cart');
   });
 }
 
-exports.postDeleteCartItem = (req, res, next) => {
+exports.postCart = (req, res, next) => {
   const productId = req.body.product_id;
   Product.findById(productId, (product) => {
-    Cart.deleteProduct(productId, err => {
+    if (req.body.delete_item === '1') {
+      Cart.deleteProduct(productId, err => {
+        res.redirect('/cart');
+      });
+      return;
+    }
+
+    Cart.addProduct(productId, product.price, err => {
       res.redirect('/cart');
     });
   });

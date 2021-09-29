@@ -50,8 +50,27 @@ module.exports = class Cart {
 		});
 	}
 
+	static removeProduct(id, cb) {
+		Cart.readCart(cart => {
+			if (!cart.products.has(id)) {
+				return cb(null);
+			}
+
+			const product = cart.products.get(id);
+			if (product.qty == 1) {
+				return Cart.deleteProduct(id, cb);
+			}
+
+			product.qty = product.qty - 1;
+			cart.totalPrice = cart.totalPrice - product.price;
+			Cart.saveCart(cart, err => {
+				console.log(err);
+				cb(err);
+			});
+		});
+	}
+
 	static deleteProduct(id, cb) {
-		console.log("removing product " + id);
 		Cart.readCart(cart => {
 			if (cart.products.has(id)) {
 				const product = cart.products.get(id)
