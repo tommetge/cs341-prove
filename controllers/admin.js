@@ -9,61 +9,56 @@ exports.getAddProduct = (req, res, next) => {
   });
 }
 
-exports.postAddProduct = (req, res, next) => {
+exports.postAddProduct = async (req, res, next) => {
   const product = new Product(
     req.body.title,
     req.body.price,
     req.body.description,
     req.body.rating,
     req.body.imageURL);
-  product.save();
-  res.redirect('/');
+    await Product.save(product);
+    res.redirect('/');
 }
 
-exports.getEditProduct = (req, res, next) => {
+exports.getEditProduct = async (req, res, next) => {
   const productId = req.params.productId;
-  Product.findById(productId, product => {
-    res.render('admin/edit-product', {
-      product: product,
-      editing: true,
-      pageTitle: 'Edit Product',
-      path: '/admin/edit-product'
-    });
+  const product = await Product.findById(productId);
+  res.render('admin/edit-product', {
+    product: product,
+    editing: true,
+    pageTitle: 'Edit Product',
+    path: '/admin/edit-product'
   });
 }
 
-exports.postEditProduct = (req, res, next) => {
+exports.postEditProduct = async (req, res, next) => {
   const productId = req.params.productId;
-  Product.findById(productId, product => {
-    product.title = req.body.title;
-    product.price = req.body.price;
-    product.description = req.body.description;
-    product.rating = req.body.rating;
-    product.imageURL = req.body.imageURL;
-    product.save();
-    res.redirect('/admin/products');
-  });
+  const product = Product.findById(productId);
+  product.title = req.body.title;
+  product.price = req.body.price;
+  product.description = req.body.description;
+  product.rating = req.body.rating;
+  product.imageURL = req.body.imageURL;
+  await Product.save(product);
+  res.redirect('/admin/products');
 }
 
-exports.postDeleteProduct = (req, res, next) => {
+exports.postDeleteProduct = async (req, res, next) => {
   const productId = req.params.productId;
-  Product.findById(productId, product => {
-    if (!product) {
-      res.redirect('/?error=' + encodeURIComponent('ProductNotFound'));
-      return res.end();
-    }
+  await Product.deleteById(productId);
+      // if (!product) {
+      //   res.redirect('/?error=' + encodeURIComponent('ProductNotFound'));
+      //   return res.end();
+      // }
 
-    product.delete();
-    res.redirect('/admin/products');
-  });
+  res.redirect('/admin/products');
 }
 
-exports.getProducts = (req, res, next) => {
-  Product.fetchAll((products) => {
-    res.render('admin/products', {
-      prods: products,
-      pageTitle: 'Admin Shop',
-      path: '/admin/products'
-    });
+exports.getProducts = async (req, res, next) => {
+  const products = await Product.fetchAll();
+  res.render('admin/products', {
+    prods: products,
+    pageTitle: 'Admin Shop',
+    path: '/admin/products'
   });
 }

@@ -1,95 +1,116 @@
-const fs = require('fs');
-const path = require('path');
+const mongodb = require('mongodb');
 
-const cartsPath = path.join(path.dirname(process.mainModule.filename), 'data', 'carts.json');
+const getDB = require('../util/database').getDB;
 
 module.exports = class Cart {
-	static readCart = cb => {
-		fs.readFile(cartsPath, (err, fileContent) => {
-			let cart = { products: new Map(), totalPrice: 0 };
-			if (!err) {
-				const storedCart = JSON.parse(fileContent);
-				cart = {
-					products: new Map(Object.entries(storedCart.products)),
-					totalPrice: storedCart.totalPrice
-				};
-			}
-
-			cb(cart);
-		});
-	}
-
-	static saveCart(cart, cb) {
-		const preJSON = {
-			products: Object.fromEntries(cart.products),
-			totalPrice: cart.totalPrice
+	constructor(products, totalPrice, id) {
+		this.products = new Map();
+		if (products) {
+			this.products = new Map(products); /* new Map(Object.entries(products)); */
 		}
-		fs.writeFile(cartsPath, JSON.stringify(preJSON), err => {
-			cb(err);
-		});
+		this.totalPrice = totalPrice ? totalPrice : 0;
+		this._id = id;
 	}
 
-	static addProduct(id, price, cb) {
-		Cart.readCart(cart => {
-			let product = cart.products.get(id);
-			if (!product) {
-				product = {
-					qty: 0,
-					price: price
-				}
-			}
-
-			product.qty = product.qty + 1;
-			cart.products.set(id, product);
-			cart.totalPrice = cart.totalPrice + +price;
-
-			Cart.saveCart(cart, err => {
-				console.log(err);
-				cb(err);
-			});
-		});
+	async save() {
+		return Cart.save(this);
 	}
 
-	static removeProduct(id, cb) {
-		Cart.readCart(cart => {
-			if (!cart.products.has(id)) {
-				return cb(null);
+	async addProduct(id, price) {
+		let product = this.products.get(id);
+		if (!product) {
+			product = {
+				qty: 0,
+				price: price
 			}
+		}
 
-			const product = cart.products.get(id);
-			if (product.qty == 1) {
-				return Cart.deleteProduct(id, cb);
-			}
+		product.qty = product.qty + 1;
+		this.products.set(id, product);
+		this.totalPrice = this.totalPrice + +price;
 
-			product.qty = product.qty - 1;
-			cart.totalPrice = cart.totalPrice - product.price;
-			Cart.saveCart(cart, err => {
-				console.log(err);
-				cb(err);
-			});
-		});
+		return this.save();
 	}
 
-	static deleteProduct(id, cb) {
-		Cart.readCart(cart => {
-			if (cart.products.has(id)) {
-				const product = cart.products.get(id)
-				const priceDeduction = product.price * product.qty;
-				cart.products.delete(id);
-				cart.totalPrice = cart.totalPrice - priceDeduction;
-				Cart.saveCart(cart, err => {
-					console.log(err);
-					cb(err);
-				});
-				return;
-			}
-			cb(null);
-		});
+	async removeProduct(id) {
+		if (!this.products.has(id)) {
+			return;
+		}
+
+		const product = this.products.get(id);
+		if (product.qty == 1) {
+			return this.deleteProduct(id);
+		}
+
+		product.qty = product.qty - 1;
+		this.totalPrice = this.totalPrice - product.price;
+
+		return this.save();
 	}
 
-	static getCart(cb) {
-		Cart.readCart(cart => {
-			cb(cart);
-		});
+	async deleteProduct(id) {
+		if (!this.products.has(id)) {
+			return;
+		}
+
+		const product = this.products.get(id)
+		const priceDeduction = product.price * product.qty;
+		this.products.delete(id);
+		this.totalPrice = this.totalPrice - priceDeduction;
+
+		return this.save();
+	}
+
+	mongoRep() {
+		return {
+			products: [...this.products], /*Object.fromEntries(this.products), */
+			totalPrice: this.totalPrice,
+			_id: this._id
+		}
+	}
+
+	static fromMongo(mongoRep) {
+		if (mongoRep == null) {
+			return null;
+		}
+		return new Cart(mongoRep.products, mongoRep.totalPrice, mongoRep._id);
+	}
+
+	static collection() {
+		return getDB().collection('carts');
+	}
+
+	static async save(cart) {
+		if (cart._id) {
+		    const result = await Cart.collection().replaceOne({ _id: cart._id }, cart.mongoRep());
+		    cart._id = result.insertedId;
+		    return result;
+	    }
+
+	    const result = await Cart.collection().insertOne(cart.mongoRep());
+	    cart._id = result.insertedId;
+	    return result;
+	}
+
+	static async findById(id) {
+		if (typeof(id) === 'string') {
+			id = new mongodb.ObjectId(id);
+		}
+
+		const cart = await Cart.collection().find({ _id: id }).next();
+		return Cart.fromMongo(cart);
+	}
+
+	static async fetchAll() {
+		const carts = await Cart.collection().find().toArray();
+		return carts.map(cart => Cart.fromMongo(cart));
+	}
+
+	static async deleteById(id) {
+		if (typeof(id) === 'string') {
+			id = new mongodb.ObjectId(id);
+		}
+
+		return await Cart.collection().deleteOne({ _id: id });
 	}
 }

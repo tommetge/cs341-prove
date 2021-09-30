@@ -12,7 +12,7 @@
     <% for (product of products) { %>
       <li>
         <div class="cart_image">
-          <a href="/products/<%= product.product.uuid %>">
+          <a href="/products/<%= product.product._id %>">
             <img src="<%= product.product.imageURL %>">
           </a>
         </div>
@@ -22,11 +22,11 @@
           <div class="cart_item_amount">
             <div class="cart_item_qty">
               <div class="cart_item_qty_minus">
-                <a href="/cart/modify?remove=1&product_id=<%= product.product.uuid %>">-</a>
+                <a href="/cart/modify?remove=1&product_id=<%= product.product._id %>">-</a>
               </div>
               <div class="cart_item_qty_value"><span><%= product.qty %></span></div>
               <div class="cart_item_qty_plus">
-                <a href="/cart/modify?add=1&product_id=<%= product.product.uuid %>">+</a>
+                <a href="/cart/modify?add=1&product_id=<%= product.product._id %>">+</a>
               </div>
             </div>
             <div class="cart_item_price">

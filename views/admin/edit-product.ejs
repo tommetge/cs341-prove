@@ -3,7 +3,7 @@
 
 <%- contentFor('body') %>
     <main>
-        <form class="product-form" action="/admin/<%= editing ? 'edit-product/' + product.uuid : 'add-product' %>" method="POST">
+        <form class="product-form" action="/admin/<%= editing ? 'edit-product/' + product._id : 'add-product' %>" method="POST">
             <div class="form-control">
                 <label for="title">Title</label>
                 <input type="text" name="title" id="title" value="<%= product.title %>">
