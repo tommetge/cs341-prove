@@ -42,7 +42,11 @@ app.use(shopRoutes);
 app.use(errorsController.get404);
 
 async function setup() {
-	await mongoose.connect('mongodb://192.168.1.6/cs341-prove');
+	if (process.env.NODE_ENV === 'development') {
+		await mongoose.connect('mongodb://192.168.1.6/cs341-prove');
+	} else {
+		await mongoose.connect('mongodb+srv://tom:01dZgbm1iC79@cluster0.8b8rq.mongodb.net/cs341-prove?retryWrites=true&w=majority');
+	}
 	console.log('Connected!');
 
 	const admin = await User.findOne({ username: 'tom', email: 'tom@metge.us' });
