@@ -10,7 +10,7 @@
 
         <% for (order of orders) { %>
             <div class="order">
-                <h2>Order <%= order.order_id %>:</h2>
+                <h2>Order <%= order.created_at %>:</h2>
 
                 <ul>
                 <% for (product of order.products) { %>

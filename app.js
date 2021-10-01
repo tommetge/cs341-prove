@@ -23,8 +23,13 @@ app.set('layout', path.join(__dirname, 'views', 'layouts', 'main-layout'));
 app.set('layout extractStyles', true);
 
 app.use(async (req, res, next) => {
-	req.user = await User.findAdmin();
-	req.cart = await req.user.cart();
+	req.user = await User.findOne({ username: 'tom', email: 'tom@metge.us' });
+	let cart = await Cart.findOne({ user_id: req.user._id });
+	if (!cart) {
+		cart = new Cart({ user_id: req.user._id });
+		await cart.save();
+	}
+	req.cart = cart;
 	next();
 });
 
@@ -37,15 +42,16 @@ app.use(shopRoutes);
 app.use(errorsController.get404);
 
 async function setup() {
-	await mongoose.connect('mongodb://192.168.1.6');
+	await mongoose.connect('mongodb://192.168.1.6/cs341-prove');
+	console.log('Connected!');
 
-	// const admin = await User.findAdmin();
-	// if (!admin) {
-	// 	user = new User('tom', 'tom@metge.us');
-	// 	return await user.save();
-	// }
+	const admin = await User.findOne({ username: 'tom', email: 'tom@metge.us' });
+	if (!admin) {
+		user = new User({ username: 'tom', email: 'tom@metge.us' });
+		return await user.save();
+	}
 
-	// return admin;
+	return admin;
 }
 
 setup().then(result => {

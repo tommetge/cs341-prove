@@ -1,11 +1,13 @@
 const mongod = require('mongodb');
 
+const dateFormat = require('../util/date');
+
 const Product = require('../models/product');
 const Cart = require('../models/cart');
 const Order = require('../models/order');
 
 exports.getProducts = async (req, res, next) => {
-  const products = await Product.fetchAll();
+  const products = await Product.find();
   res.render('shop/product-list', {
     prods: products,
     pageTitle: 'Shop',
@@ -24,7 +26,7 @@ exports.getProduct = async (req, res, next) => {
 }
 
 exports.getIndex = async (req, res, next) => {
-  const products = await Product.fetchAll();
+  const products = await Product.find();
   res.render('shop/index', {
     prods: products,
     pageTitle: 'Shop',
@@ -33,15 +35,15 @@ exports.getIndex = async (req, res, next) => {
 }
 
 exports.getCart = async (req, res, next) => {
-  const products = await Product.fetchAll();
+  const products = await Product.find();
   const filteredProducts = products.filter(product => req.cart.products.has(product._id.toString()));
   const myCart = filteredProducts.map(product => {
     return {
       product: product,
-      qty: req.cart.products.get(product._id.toString()).qty
+      qty: req.cart.products.get(product._id.toString())
     }
   });
-  myCart.totalPrice = req.cart.totalPrice;
+  myCart.totalPrice = await req.cart.totalPrice();
 
   res.render('shop/cart', {
     products: myCart,
@@ -54,13 +56,13 @@ exports.getModifyCart = async (req, res, next) => {
   const productId = req.query.product_id;
   const product = await Product.findById(productId);
   if (req.query.remove == '1') {
-    await req.cart.removeProduct(productId);
+    await req.cart.removeProduct(product);
     res.redirect('/cart');
     return;
   }
 
   if (req.query.add == '1') {
-    await req.cart.addProduct(productId, product.price);
+    await req.cart.addProduct(product);
     res.redirect('/cart');
     return;
   }
@@ -77,24 +79,26 @@ exports.postCart = async (req, res, next) => {
     return result;
   }
 
-  const result = await req.cart.addProduct(productId, product.price);
+  console.log(typeof req.cart);
+  const result = await req.cart.addProduct(product);
   res.redirect('/cart');
   return result;
 }
 
 exports.getOrders = async (req, res, next) => {
-  const orders = await Order.findByUserId(req.user._id);
-  const products = await Product.fetchAll();
+  const orders = await Order.find({ user_id: req.user._id });
+  const products = await Product.find();
   const myOrders = [];
   for (order of orders) {
     const filteredProducts = products.filter(product => order.products.has(product._id.toString()));
     const myProducts = filteredProducts.map(product => {
       return {
         product: product,
-        qty: order.products.get(product._id.toString()).qty
+        qty: order.products.get(product._id.toString())
       }
     });
-    myOrders.push({ products: myProducts, order_id: order._id, total: order.total });
+    const total = await order.totalPrice();
+    myOrders.push({ products: myProducts, order_id: order._id, total: total, created_at: dateFormat(order.created_at) });
   }
   res.render('shop/orders', {
     orders: myOrders,
@@ -105,15 +109,15 @@ exports.getOrders = async (req, res, next) => {
 
 exports.getOrder = async (req, res, next) => {
   const order = await Order.findById(req.params.order_id);
-  const products = await Product.fetchAll();
+  const products = await Product.find();
   const filteredProducts = products.filter(product => order.products.has(product._id.toString()));
   const myOrder = filteredProducts.map(product => {
     return {
       product: product,
-      qty: order.products.get(product._id.toString()).qty
+      qty: order.products.get(product._id.toString())
     }
   });
-  myOrder.totalPrice = order.total;
+  myOrder.totalPrice = await order.totalPrice();
   res.render('shop/order', {
     products: myOrder,
     path: '/order',
@@ -122,16 +126,15 @@ exports.getOrder = async (req, res, next) => {
 }
 
 exports.getCheckout = async (req, res, next) => {
-  const products = await Product.fetchAll();
+  const products = await Product.find();
   const filteredProducts = products.filter(product => req.cart.products.has(product._id.toString()));
   const myCart = filteredProducts.map(product => {
     return {
       product: product,
-      qty: req.cart.products.get(product._id.toString()).qty
+      qty: req.cart.products.get(product._id.toString())
     }
   });
-  myCart.totalPrice = req.cart.totalPrice;
-  console.log('cart (checkout): ' + JSON.stringify(myCart));
+  myCart.totalPrice = await req.cart.totalPrice();
   res.render('shop/checkout', {
     products: myCart,
     path: '/checkout',
@@ -140,7 +143,8 @@ exports.getCheckout = async (req, res, next) => {
 }
 
 exports.postCheckout = async (req, res, next) => {
-  const order = Order.orderFromCart(req.cart);
+  const order = new Order();
+  order.copyFromCart(req.cart);
   await order.save();
   await req.cart.reset();
   res.redirect('/orders/' + order._id);

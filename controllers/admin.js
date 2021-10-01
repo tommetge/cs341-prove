@@ -10,14 +10,15 @@ exports.getAddProduct = (req, res, next) => {
 }
 
 exports.postAddProduct = async (req, res, next) => {
-  const product = new Product(
-    req.body.title,
-    req.body.price,
-    req.body.description,
-    req.body.rating,
-    req.body.imageURL);
-    await Product.save(product);
-    res.redirect('/');
+  const product = new Product({
+    title: req.body.title,
+    price: req.body.price,
+    description: req.body.description,
+    rating: req.body.rating,
+    imageURL: req.body.imageURL
+  });
+  await product.save(product);
+  res.redirect('/');
 }
 
 exports.getEditProduct = async (req, res, next) => {
@@ -33,29 +34,24 @@ exports.getEditProduct = async (req, res, next) => {
 
 exports.postEditProduct = async (req, res, next) => {
   const productId = req.params.productId;
-  const product = Product.findById(productId);
+  const product = await Product.findById(productId);
   product.title = req.body.title;
   product.price = req.body.price;
   product.description = req.body.description;
   product.rating = req.body.rating;
   product.imageURL = req.body.imageURL;
-  await Product.save(product);
+  await product.save();
   res.redirect('/admin/products');
 }
 
 exports.postDeleteProduct = async (req, res, next) => {
   const productId = req.params.productId;
-  await Product.deleteById(productId);
-      // if (!product) {
-      //   res.redirect('/?error=' + encodeURIComponent('ProductNotFound'));
-      //   return res.end();
-      // }
-
+  await Product.findByIdAndRemove(productId);
   res.redirect('/admin/products');
 }
 
 exports.getProducts = async (req, res, next) => {
-  const products = await Product.fetchAll();
+  const products = await Product.find();
   res.render('admin/products', {
     prods: products,
     pageTitle: 'Admin Shop',
