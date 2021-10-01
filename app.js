@@ -1,6 +1,7 @@
 const bodyParser = require('body-parser');
 const express = require('express');
 const expressLayouts = require('express-ejs-layouts');
+const mongoose = require('mongoose');
 const path = require('path');
 
 const errorsController = require('./controllers/errors');
@@ -36,15 +37,15 @@ app.use(shopRoutes);
 app.use(errorsController.get404);
 
 async function setup() {
-	await mongoConnect();
+	await mongoose.connect('mongodb://192.168.1.6');
 
-	const admin = await User.findAdmin();
-	if (!admin) {
-		user = new User('tom', 'tom@metge.us');
-		return await user.save();
-	}
+	// const admin = await User.findAdmin();
+	// if (!admin) {
+	// 	user = new User('tom', 'tom@metge.us');
+	// 	return await user.save();
+	// }
 
-	return admin;
+	// return admin;
 }
 
 setup().then(result => {

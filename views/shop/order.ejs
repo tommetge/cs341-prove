@@ -21,13 +21,7 @@
           <h3><%= product.product.title %></h3>
           <div class="cart_item_amount">
             <div class="cart_item_qty">
-              <div class="cart_item_qty_minus">
-                <a href="/cart/modify?remove=1&product_id=<%= product.product._id %>">-</a>
-              </div>
               <div class="cart_item_qty_value"><span><%= product.qty %></span></div>
-              <div class="cart_item_qty_plus">
-                <a href="/cart/modify?add=1&product_id=<%= product.product._id %>">+</a>
-              </div>
             </div>
             <div class="cart_item_price">
               <span>$<%= (product.product.price * product.qty).toFixed(2) %></span>
@@ -39,12 +33,9 @@
     </ul>
 
     <div class="checkout">
-      <form action="/checkout" method="POST">
-        <button class="btn" type="submit">Submit Order</button>
-        <div class="cart_total">
-          <h2>$<%= products.totalPrice.toFixed(2) %></h2>
-        </div>
-      </form>
+      <div class="cart_total">
+        <h2>$<%= products.totalPrice.toFixed(2) %></h2>
+      </div>
     </div>
 
     <% } %>

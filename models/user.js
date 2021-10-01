@@ -4,26 +4,21 @@ const Cart = require('./cart');
 const getDB = require('../util/database').getDB;
 
 module.exports = class User {
-	constructor(username, email, id, cart_id) {
+	constructor(username, email, id) {
 		this.username = username;
 		this.email = email;
 		this._id = id;
-		this.cart_id = cart_id;
 	}
 
 	async cart() {
-		var cart;
-		if (this.cart_id) {
-			cart = await Cart.findById(this.cart_id);
-			if (cart) {
-				return cart;
-			}
+		var cart = await Cart.findByUserId(this._id);
+		if (cart) {
+			return cart;
 		}
 
 		cart = new Cart();
+		cart.user_id = this._id;
 		await cart.save();
-		this.cart_id = cart._id;
-		await this.save();
 
 		return cart;
 	}
@@ -36,7 +31,7 @@ module.exports = class User {
 		if (!mongoRep) {
 			return null;
 		}
-		return new User(mongoRep.username, mongoRep.email, mongoRep._id, mongoRep.cart_id)
+		return new User(mongoRep.username, mongoRep.email, mongoRep._id)
 	}
 
 	static collection() {

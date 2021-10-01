@@ -19,6 +19,10 @@ router.get('/cart/modify', shopController.getModifyCart);
 
 router.get('/orders', shopController.getOrders);
 
+router.get('/orders/:order_id', shopController.getOrder);
+
 router.get('/checkout', shopController.getCheckout);
+
+router.post('/checkout', shopController.postCheckout);
 
 module.exports = router;
