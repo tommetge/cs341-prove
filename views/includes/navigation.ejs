@@ -8,10 +8,19 @@
         <ul class="main-header__item-list">
             <li class="main-header__item"><%- navLink(path, '/', 'Shop') %></li>
             <li class="main-header__item"><%- navLink(path, '/products', 'Products') %></li>
+            <% if (isLoggedIn) { %>
             <li class="main-header__item"><%- navLink(path, '/cart', 'Cart') %></li>
             <li class="main-header__item"><%- navLink(path, '/orders', 'Orders') %></li>
             <li class="main-header__item"><%- navLink(path, '/admin/add-product', 'Add Product') %></li>
             <li class="main-header__item"><%- navLink(path, '/admin/products', 'Admin Products') %></li>
+            <% } %>
+        </ul>
+        <ul class="main-header__item-list">
+            <% if (isLoggedIn) { %>
+            <li class="main-header__item"><%- navLink(path, '/logout', 'Logout') %></li>
+            <% } else { %>
+            <li class="main-header__item"><%- navLink(path, '/login', 'Login') %></li>
+            <% } %>
         </ul>
     </nav>
 </header>

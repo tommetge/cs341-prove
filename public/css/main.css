@@ -34,8 +34,10 @@ form {
 
 .main-header__nav {
   height: 100%;
-  display: none;
+  width: 100%;
+  display: flex;
   align-items: center;
+  justify-content: space-between;
 }
 
 .main-header__item-list {
@@ -205,4 +207,18 @@ form {
   #side-menu-toggle {
     display: none;
   }
+}
+
+.flash-info {
+  margin: 10px 0px;
+  padding: 12px;
+  color: #00529B;
+  background-color: #BDE5F8;
+}
+
+.flash-error {
+  margin: 10px 0px;
+  padding: 12px;
+  color: #D8000C;
+  background-color: #FFD2D2;
 }

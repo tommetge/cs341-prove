@@ -4,6 +4,7 @@
 <%- contentFor('body') %>
     <main>
         <form class="product-form" action="/admin/add-product" method="POST">
+            <%- include('../includes/csrf-input.ejs') %>
             <div class="form-control">
                 <label for="title">Title</label>
                 <input type="text" name="title" id="title">

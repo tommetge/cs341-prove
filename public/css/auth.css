@@ -1,0 +1,25 @@
+.login-form {
+    width:  20rem;
+    max-width: 90%;
+    margin: auto;
+    display: block;
+}
+
+.login-buttons {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.login-buttons a {
+    text-decoration: none;
+}
+
+.signup-form {
+    width:  20rem;
+    max-width: 90%;
+    margin: auto;
+    display: block;
+}
