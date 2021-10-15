@@ -1,0 +1,7 @@
+<% if ((typeof validationErrors !== 'undefined') && validationErrors.length > 0) { %>
+    <div class="validation-error">
+    <% for (error of validationErrors) { %>
+        <p><%= error %></p>
+    <% } %>
+    </div>
+<% } %>

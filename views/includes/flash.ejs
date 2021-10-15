@@ -2,6 +2,14 @@
 <div class="flash-error"><%= flashError %></div>
 <% } %>
 
+<% if (flashErrors && flashErrors.length > 0) { %>
+    <div class="flash-error">
+    <% for (error of flashErrors) { %>
+        <p><%= error %></p>
+    <% } %>
+    </div>
+<% } %>
+
 <% if (flashInfo.length > 0) { %>
 <div class="flash-info"><%- flashInfo %></div>
 <% } %>

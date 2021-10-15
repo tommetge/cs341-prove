@@ -3,13 +3,14 @@
 
 <%- contentFor('body') %>
     <main>
+        <%- include('../includes/validation-msgs.ejs') %>
         <form class="signup-form" action="/signup" method="POST">
             <%- include('../includes/csrf-input.ejs') %>
             <div class="form-control">
                 <label for="name">Name</label>
-                <input type="text" name="name" id="name">
+                <input type="text" name="name" id="name" value="<%= (typeof oldBody !== 'undefined' && oldBody) ? oldBody.name : '' %>" autofocus>
                 <label for="email">Email</label>
-                <input type="text" name="email" id="email">
+                <input type="text" name="email" id="email" value="<%= (typeof oldBody !== 'undefined' && oldBody) ? oldBody.email : '' %>">
                 <label for="password">Password</label>
                 <input type="password" name="password" id="password">
                 <label for="confirmPassword">Confirm Password</label>

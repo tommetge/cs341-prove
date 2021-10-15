@@ -55,6 +55,7 @@ app.use(async (req, res, next) => {
 
     res.locals.csrfToken = req.csrfToken();
     res.locals.flashError = req.flash('error');
+    res.locals.flashErrors = req.flash('errors');
     res.locals.flashInfo = req.flash('info');
 
 	next();

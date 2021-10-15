@@ -3,6 +3,7 @@ const Role = require('../models/role');
 
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
+const { validationResult } = require('express-validator');
 
 const mailer = require('../util/mail');
 
@@ -14,6 +15,16 @@ exports.getLogin = (req, res, next) => {
 }
 
 exports.postLogin = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).render('auth/login', {
+      pageTitle: 'Login',
+      path: '/login',
+      validationErrors: errors.array().map(e => e.msg),
+      oldBody: req.body
+    });
+  }
+
   const user = await User.findOne({ email: req.body.email });
   if (!user) {
     req.flash('error', 'Invalid email or password');
@@ -41,19 +52,18 @@ exports.getSignup = async (req, res, next) => {
   res.render('auth/signup', {
     pageTitle: 'Signup',
     path: '/signup'
-  })
+  });
 }
 
 exports.postSignup = async (req, res, next) => {
-  var user = await User.findOne({ email: req.body.email });
-  if (user != null) {
-    req.flash('error', 'User exists - please login');
-    return res.redirect('/login');
-  }
-
-  if (req.body.password != req.body.confirmPassword) {
-    req.flash('error', 'Passwords do not match!');
-    return res.redirect('/signup');
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).render('auth/signup', {
+      pageTitle: 'Signup',
+      path: '/signup',
+      validationErrors: errors.array().map(e => e.msg),
+      oldBody: req.body
+    });
   }
 
   const defaultRole = await Role.defaultRole();
@@ -83,6 +93,16 @@ exports.getReset = async (req, res, next) => {
 }
 
 exports.postReset = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).render('auth/reset', {
+      pageTitle: 'Reset',
+      path: '/reset',
+      validationErrors: errors.array().map(e => e.msg),
+      oldBody: req.body
+    });
+  }
+
   const buffer = await crypto.randomBytes(32);
   const token = buffer.toString('hex');
   const user = await User.findOne({email: req.body.email});
@@ -125,6 +145,17 @@ exports.postNewPassword = async (req, res, next) => {
   if (!user) {
     req.flash('error', 'Invalid token');
     return res.redirect('/reset');
+  }
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).render('auth/new-password', {
+      pageTitle: 'New Password',
+      path: '/new-password',
+      user_id: user._id,
+      token: req.body.token,
+      validationErrors: errors.array().map(e => e.msg)
+    });
   }
 
   user.passwordHash = await User.hashPassword(req.body.password);
