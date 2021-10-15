@@ -4,7 +4,7 @@ const Role = require('../models/role');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 
-const transporter = require('../util/mail');
+const mailer = require('../util/mail');
 
 exports.getLogin = (req, res, next) => {
   res.render('auth/login', {
@@ -70,12 +70,7 @@ exports.postSignup = async (req, res, next) => {
 
   req.flash('info', 'Signed up successfully!');
 
-  transporter.sendMail({
-    to: user.email,
-    from: 'tom@accident-prone.com',
-    subject: 'Welcome!',
-    html: '<h1>Welcome to the CS341 Shop!!'
-  });
+  mailer.sendWelcome(user);
 
   res.redirect('/');
 }
@@ -99,16 +94,7 @@ exports.postReset = async (req, res, next) => {
   user.resetExpiration = Date.now() + 3600000;
   await user.save();
 
-  await transporter.sendMail({
-    to: user.email,
-    from: 'tom@accident-prone.com',
-    subject: 'Reset Password',
-    html: `
-    <p>You requested a password reset</p>
-    <p>Click this <a href="http://localhost:3000/new-password/${token}">link to set a new password</p>
-    <p>You can also input this token by hand: ${token}</p>
-    `
-  });
+  mailer.sendResetPassword(user);
 
   console.log('Reset link sent to ' + user.email + ', http://localhost:3000/new-password/' + token);
 
