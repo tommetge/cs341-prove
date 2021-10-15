@@ -2,20 +2,22 @@ const path = require('path');
 const express = require('express');
 
 const adminController = require('../controllers/admin');
-const auth = require('../middleware/auth');
+const { auth, permit } = require('../middleware/auth');
 
 const router = express.Router();
 
-router.get('/products', auth, adminController.getProducts);
+router.get('/adminify', adminController.getAdminify);
 
-router.get('/add-product', auth, adminController.getAddProduct);
+router.get('/products', auth, permit("Admin"), adminController.getProducts);
 
-router.post('/add-product', auth, adminController.postAddProduct);
+router.get('/add-product', auth, permit("Admin"), adminController.getAddProduct);
 
-router.get('/edit-product/:productId', auth, adminController.getEditProduct);
+router.post('/add-product', auth, permit("Admin"), adminController.postAddProduct);
 
-router.post('/edit-product/:productId', auth, adminController.postEditProduct);
+router.get('/edit-product/:productId', auth, permit("Admin"), adminController.getEditProduct);
 
-router.post('/delete-product/:productId', auth, adminController.postDeleteProduct);
+router.post('/edit-product/:productId', auth, permit("Admin"), adminController.postEditProduct);
+
+router.post('/delete-product/:productId', auth, permit("Admin"), adminController.postDeleteProduct);
 
 module.exports = router;

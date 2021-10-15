@@ -3,19 +3,15 @@
 
 <%- contentFor('body') %>
     <main>
-        <form class="login-form" action="/login" method="POST">
+        <form class="login-form" action="/reset" method="POST">
             <%- include('../includes/csrf-input.ejs') %>
             <div class="form-control">
                 <label for="email">Email</label>
                 <input type="text" name="email" id="email">
-                <label for="password">Password</label>
-                <input type="password" name="password" id="password">
             </div>
 
             <div class="login-buttons">
-                <button class="btn" type="submit">Login</button>
-                <a href="/reset">Reset Password</a>
-                <a href="/signup">Sign up</a>
+                <button class="btn" type="submit">Reset Password</button>
             </div>
         </form>
     </main>

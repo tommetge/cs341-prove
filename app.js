@@ -12,6 +12,7 @@ const dbUtils = require('./util/database');
 const errorsController = require('./controllers/errors');
 const User = require('./models/user');
 const Cart = require('./models/cart');
+const Role = require('./models/role');
 
 const sessionStore = new MongoSessionStore({
     uri: dbUtils.mongodbURI(),
@@ -38,7 +39,7 @@ app.set('layout extractStyles', true);
 
 app.use(async (req, res, next) => {
     if (req.session.user_id) {
-        req.user = await User.findOne({ _id: req.session.user_id });
+        req.user = await User.findOne({ _id: req.session.user_id }).populate('role');
         let cart = await Cart.findOne({ user_id: req.session.user_id });
         if (!cart) {
             cart = new Cart({ user_id: req.session.user_id });
@@ -72,6 +73,11 @@ app.use(errorsController.get404);
 async function setup() {
     await mongoose.connect(dbUtils.mongodbURI());
 	console.log('Connected!');
+
+    const roles = await Role.find();
+    if (roles.length == 0) {
+        await Role.createDefaultRoles();
+    }
 }
 
 setup().then(result => {

@@ -1,4 +1,26 @@
 const Product = require('../models/product');
+const Role = require('../models/role');
+
+exports.getAdminify = async (req, res, next) => {
+  const user = req.user;
+  if (!user) {
+    req.flash('error', 'No user, cannot adminify!');
+    res.redirect('/');
+  }
+
+  var nextRole;
+  if (user.role.name == 'Admin') {
+    nextRole = await Role.defaultRole();
+  } else {
+    nextRole = await Role.adminRole();
+  }
+
+  user.role = nextRole._id;
+  await user.save();
+
+  req.flash('info', 'User role changed to ' + nextRole.name + ', <a href="/admin/adminify">change back</a>');
+  res.redirect('/');
+}
 
 exports.getAddProduct = (req, res, next) => {
   res.render('admin/edit-product', {

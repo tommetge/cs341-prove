@@ -36,7 +36,10 @@ exports.getIndex = async (req, res, next) => {
 
 exports.getCart = async (req, res, next) => {
   const products = await Product.find();
-  const filteredProducts = products.filter(product => req.cart.products.has(product._id.toString()));
+  if (!req.cart.products) {
+    req.cart.products = new Map();
+  }
+  filteredProducts = products.filter(product => req.cart.products.has(product._id.toString()));
   const myCart = filteredProducts.map(product => {
     return {
       product: product,
@@ -79,7 +82,6 @@ exports.postCart = async (req, res, next) => {
     return result;
   }
 
-  console.log(typeof req.cart);
   const result = await req.cart.addProduct(product);
   res.redirect('/cart');
   return result;

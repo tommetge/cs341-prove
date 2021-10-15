@@ -11,8 +11,10 @@
             <% if (isLoggedIn) { %>
             <li class="main-header__item"><%- navLink(path, '/cart', 'Cart') %></li>
             <li class="main-header__item"><%- navLink(path, '/orders', 'Orders') %></li>
+                <% if (user.role.name == "Admin") { %>
             <li class="main-header__item"><%- navLink(path, '/admin/add-product', 'Add Product') %></li>
             <li class="main-header__item"><%- navLink(path, '/admin/products', 'Admin Products') %></li>
+                <% } %>
             <% } %>
         </ul>
         <ul class="main-header__item-list">
