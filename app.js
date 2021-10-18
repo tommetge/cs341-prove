@@ -2,6 +2,7 @@ const bodyParser = require('body-parser');
 const csurf = require('csurf');
 const express = require('express');
 const expressLayouts = require('express-ejs-layouts');
+require('express-async-errors');
 const flash = require('connect-flash');
 const mongoose = require('mongoose');
 const path = require('path');
@@ -58,7 +59,7 @@ app.use(async (req, res, next) => {
     res.locals.flashErrors = req.flash('errors');
     res.locals.flashInfo = req.flash('info');
 
-	next();
+    next();
 });
 
 const adminRoutes = require('./routes/admin');
@@ -69,7 +70,11 @@ app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
 
+app.get('/500', errorsController.get500);
+
 app.use(errorsController.get404);
+
+app.use(errorsController.handle500);
 
 async function setup() {
     await mongoose.connect(dbUtils.mongodbURI());
