@@ -41,8 +41,10 @@
     <div class="checkout">
       <form action="/checkout" method="POST">
         <%- include('../includes/csrf-input.ejs') %>
-        <button class="btn" type="submit">Submit Order</button>
-        <div class="cart_total">
+        <div class="cart_total_elem">
+          <button class="btn" type="submit">Submit Order</button>
+        </div>
+        <div class="cart_total_elem cart_total">
           <h2>$<%= products.totalPrice.toFixed(2) %></h2>
         </div>
       </form>

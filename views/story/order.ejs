@@ -1,7 +1,9 @@
 <link rel="stylesheet" href="/css/cart.css">
+<link rel="stylesheet" href="/css/order.css">
 
 <%- contentFor('body') %>
   <main class="cart">
+    <h2>Order Details</h2>
     <% if (stories.length == 0) { %>
 
     <h1>No stories in this order!</h1>
@@ -24,16 +26,10 @@
           </div>
           <div class="cart_item_amount">
             <div class="cart_item_qty">
-              <div class="cart_item_qty_minus">
-                <a href="/story/cart/modify?remove=1&story_id=<%= story._id %>">-</a>
-              </div>
-              <div class="cart_item_qty_value"><span><%= cart.stories.get(story._id) %></span></div>
-              <div class="cart_item_qty_plus">
-                <a href="/story/cart/modify?add=1&story_id=<%= story._id %>">+</a>
-              </div>
+              <div class="cart_item_qty_value">(<%= order.stories.get(story._id) %>)</div>
             </div>
             <div class="cart_item_price">
-              <span>$<%= (story_prices[story._id] * cart.stories.get(story._id)).toFixed(2) %></span>
+              <span>$<%= (story_prices[story._id] * order.stories.get(story._id)).toFixed(2) %></span>
             </div>
           </div>
         </div>
@@ -46,9 +42,6 @@
         <%- include('../includes/csrf-input.ejs') %>
         <div class="cart_total_elem cart_total">
           <h2>$<%= price.toFixed(2) %></h2>
-        </div>
-        <div class="cart_submit">
-          <button class="btn" type="submit">Submit Order</button>
         </div>
       </form>
     </div>

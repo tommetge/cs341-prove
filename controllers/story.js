@@ -14,6 +14,7 @@ const Geography = require('../models/geography');
 const Period = require('../models/period');
 const Talent = require('../models/talent');
 const StoryCart = require('../models/story_cart');
+const StoryOrder = require('../models/story_order');
 const User = require('../models/user');
 
 // Helpers
@@ -324,6 +325,14 @@ exports.getStoryCheckout = async (req, res, next) => {
   });
 }
 
+exports.postStoryCheckout = async (req, res, next) => {
+  const order = new StoryOrder();
+  order.copyFromCart(req.story_cart);
+  await order.save();
+  await req.story_cart.reset();
+  res.redirect('/story/orders/' + order._id);
+}
+
 exports.getModifyStoryCart = async (req, res, next) => {
   const story = await Story.findOne({ _id: req.query.story_id });
   if (!story) {
@@ -347,11 +356,54 @@ exports.getModifyStoryCart = async (req, res, next) => {
 }
 
 exports.getStoryOrders = async (req, res, next) => {
+  const orders = await StoryOrder.find({ user_id: req.user._id });
   const stories = await Story.find({ user_id: req.user._id });
+
+  const order_prices = {};
+  const order_stories = {};
+  for (order of orders) {
+    order_prices[order._id] = await order.totalPrice();
+    order_stories[order._id] = await order.orderedStories();
+  }
+
+  const story_prices = {};
+  for (story of stories) {
+    story_prices[story._id] = await story.price();
+  }
 
   res.render('story/orders', {
     pageTitle: 'Orders',
     path: '/orders',
+    orders: orders,
+    order_prices: order_prices,
+    order_stories: order_stories,
+    story_prices: story_prices,
     stories: stories
   });
 }
+
+exports.getStoryOrderById = async (req, res, next) => {
+  const order = await StoryOrder.findOne({ _id: req.params.order_id });
+  const stories = await order.orderedStories();
+
+  const story_prices = {};
+  const story_characters = {};
+  const story_events = {};
+  for (var story of stories) {
+    story_prices[story._id] = await story.price();
+    story_characters[story._id] = await Character.count({story_id: story._id});
+    story_events[story._id] = story.events.length;
+  }
+
+  res.render('story/order', {
+    pageTitle: 'Order',
+    path: '/order',
+    order: order,
+    stories: stories,
+    story_prices: story_prices,
+    story_characters: story_characters,
+    story_events: story_events,
+    price: await order.totalPrice()
+  });
+}
+

@@ -13,6 +13,8 @@ router.get('/story/list', storyController.getListStories);
 
 router.get('/story/orders', storyController.getStoryOrders);
 
+router.get('/story/orders/:order_id', storyController.getStoryOrderById);
+
 router.get('/story/add', storyController.getAddStory);
 
 router.post('/story/add', storyController.postAddStory);
@@ -56,6 +58,8 @@ router.get('/story/:story_id/review', storyController.getStoryReview);
 router.get('/story/:story_id/order', storyController.getStoryOrder);
 
 router.get('/story/checkout', storyController.getStoryCheckout);
+
+router.post('/story/checkout', storyController.postStoryCheckout);
 
 router.get('/story/cart/modify', storyController.getModifyStoryCart);
 

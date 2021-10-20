@@ -21,6 +21,10 @@
 	width: 100%;
 }
 
+.cart h2 {
+	text-align: center;
+}
+
 .cart_image img {
 	width: 120px;
 }
@@ -81,17 +85,26 @@
 	width: 200px;
 }
 
-.cart_total {
-	padding-left: 24px;
-	width: 50%;
+.cart_total h2 {
+	text-align: center;
 }
 
-.cart_total h2 {
-	float: right;
+.checkout form {
+	width: 100%;
 }
 
 .checkout {
 	display: flex;
 	padding-left: 40px;
 	align-items: center;
+}
+
+.cart_total_elem {
+	flex: 1;
+	text-align: center ;
+}
+
+.cart_submit {
+	text-align: center;
+	padding-bottom: 24px;
 }

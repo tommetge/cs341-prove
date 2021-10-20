@@ -12,7 +12,6 @@ const MongoSessionStore = require('connect-mongodb-session')(session);
 const dbUtils = require('./util/database');
 const errorsController = require('./controllers/errors');
 const User = require('./models/user');
-const Cart = require('./models/cart');
 const Role = require('./models/role');
 const CharacterRole = require('./models/character_role');
 const StoryState = require('./models/story_state');
@@ -50,12 +49,6 @@ app.set('layout extractStyles', true);
 app.use(async (req, res, next) => {
     if (req.session.user_id) {
         req.user = await User.findOne({ _id: req.session.user_id }).populate('role');
-        let cart = await Cart.findOne({ user_id: req.session.user_id });
-        if (!cart) {
-            cart = new Cart({ user_id: req.session.user_id });
-            await cart.save();
-        }
-        req.cart = cart;
         let storyCart = await StoryCart.findOne({ user_id: req.session.user_id });
         if (!storyCart) {
             storyCart = new StoryCart({ user_id: req.session.user_id });

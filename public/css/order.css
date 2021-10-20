@@ -1,0 +1,44 @@
+.order_story li {
+    display: flex;
+}
+
+.order_story_name {
+    float: left;
+    width: 50%;
+    font-size: 1.5rem;
+}
+
+.order_story_name a {
+    text-decoration: none;
+}
+
+.order_story_price {
+    float: right;
+    width: 50%;
+    text-align: right;
+    font-size: 1.5rem;
+}
+
+.order_img img {
+    object-fit: cover;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+}
+
+.card__image {
+    text-align: center;
+}
+
+.card__header h1 {
+    text-align: center;
+}
+
+.cart_item_qty {
+    border: none;
+}
+
+.order {
+    margin-bottom: 2rem;
+    margin-top: 2rem;
+}

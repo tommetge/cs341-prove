@@ -1,43 +1,44 @@
 <link rel="stylesheet" href="/css/cart.css">
+<link rel="stylesheet" href="/css/order.css">
 
 <%- contentFor('body') %>
   <main class="cart">
-    <% if (stories.length == 0) { %>
+    <% if (orders.length == 0) { %>
 
     <h1>No stories in this order!</h1>
 
     <% } else { %>
 
-    <ul>
-    <% for (story of stories) { %>
-      <li>
-        <div class="cart_image">
-          <a href="/story/<%= story._id %>">
-            <!-- TODO: Placeholder image -->
-            <%= story.name %>
-          </a>
+    <% for (order of orders) { %>
+      <div class="card order">
+        <header class="card__header">
+            <h1 class="order_name">
+              <a href="/story/orders/<%= order._id %>">Order on <%= order.formattedDate() %></a></h1>
+        </header>
+        <div class="card__image order_img">
+            <img src="/images/story-default.jpg">
         </div>
-
-        <div class="cart_item_detail">
-          <h3><%= story.name %></h3>
-          <div class="cart_item_amount">
-            <div class="cart_item_qty">
-              <div class="cart_item_qty_value"><span><%= // stories.get(story._id) %></span></div>
-            </div>
-            <div class="cart_item_price">
-              <span>$<%= // (story_prices[story._id] * stories.get(story._id)).toFixed(2) %></span>
-            </div>
+        <div class="card__content">
+          <div class="order_stories">
+            <ul>
+              <% for (story of order_stories[order._id]) { %>
+                <li>
+                  <div class="order_story_name">
+                    <a href="/story/<%= story._id %>"><%= story.name %></a>
+                  </div>
+                  <div class="order_story_price">
+                    <%= order.stories.get(story._id) %> @ $<%= story_prices[story._id] %>
+                  </div>
+                </li>
+              <% } %>
+            </ul>
+          </div>
+          <div class="cart_total">
+            <h2>Total: $<%= order_prices[order._id].toFixed(2) %></h2>
           </div>
         </div>
-      </li>
-    <% } %>
-    </ul>
-
-    <div class="checkout">
-      <div class="cart_total">
-        <h2>$<%= // price.toFixed(2) %></h2>
       </div>
-    </div>
+    <% } %>
 
     <% } %>
   </main>
