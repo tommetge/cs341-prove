@@ -1,0 +1,24 @@
+<link rel="stylesheet" href="/css/story.css">
+
+<form class="story_form" action="/admin/<%= item_type %>/<%= item._id %>" method="POST">
+    <%- include('../includes/csrf-input.ejs') %>
+
+    <h1>Edit <%= item_type %></h1>
+
+    <div class="admin_form">
+        <div class="form-control">
+            <label for="name">Name</label>
+            <input type="text" name="name" id="name" value="<%= item.name %>">
+            <label for="caption">Caption</label>
+            <input type="text" name="caption" id="caption" value="<%= item.caption %>">
+            <label for="description">Description</label>
+            <textarea name="description" id="description"><%= item.description %></textarea>
+            <label for="imageURL">Image URL</label>
+            <input type="text" name="imageURL" id="imageURL" value="<%= item.imageURL %>">
+        </div>
+
+        <div class="story_select_button">
+            <button type="submit">Save</button>
+        </div>
+    </div>
+</form>

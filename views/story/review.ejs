@@ -1,37 +1,19 @@
 <link rel="stylesheet" href="/css/story.css">
 
+<% const back_link = '/story/' + story._id + '/review'; %>
+
 <%- contentFor('body') %>
     <div class="story_review">
         <h1>"<%= story.name %>"</h1>
 
         <h2>Your story is a</h2>
-        <div class="grid story_select">
-            <div class="card">
-                <header class="card__header">
-                    <h1 class="story.type_name"><%= story.type.name %></h1>
-                </header>
-                <div class="card__image story_select_img">
-                    <img src="<%= story.type.imageURL %>" alt="<%= story.type.caption %>">
-                </div>
-                <div class="card__content">
-                    <p class="story_description"><%= story.type.description %></p>
-                </div>
-            </div>
+        <div class="grid">
+            <%- include('../includes/item-card.ejs', { item: story.type, link_prefix: 'story', item_type: 'type', back_link: back_link }); %>
         </div>
 
         <h2>set in a</h2>
         <div class="grid">
-            <div class="card">
-                <header class="card__header">
-                    <h1 class="story.genre_name"><%= story.genre.name %></h1>
-                </header>
-                <div class="card__image story_select_img">
-                    <img src="<%= story.genre.imageURL %>" alt="<%= story.genre.caption %>">
-                </div>
-                <div class="card__content">
-                    <p class="story_description"><%= story.genre.description %></p>
-                </div>
-            </div>
+            <%- include('../includes/item-card.ejs', { item: story.genre, link_prefix: 'story', item_type: 'genre', back_link: back_link }); %>
         </div>
 
 
@@ -52,20 +34,11 @@
 
         <h2>and your story is set in</h2>
         <div class="grid">
-            <div class="card">
-                <header class="card__header">
-                    <h1 class="story_period_name"><%= story.period.name %></h1>
-                </header>
-                <div class="card__image story_select_img">
-                    <img src="<%= story.period.imageURL %>" alt="<%= story.period.caption %>">
-                </div>
-                <div class="card__content">
-                    <p class="story_period_description"><%= story.period.description %></p>
-                </div>
-            </div>
+            <%- include('../includes/item-card.ejs', { item: story.period, link_prefix: 'story', item_type: 'period', back_link: back_link }); %>
         </div>
 
         <h2>The world has locations of note that include:</h2>
+        <h3><a class="btn" href="/story/<%= story._id %>/geos?ref=<%= back_link %>">Make Changes</a></h3>
         <div class="grid">
             <% for (story_geo of story.geos) { %>
                 <div class="card">
@@ -83,6 +56,7 @@
         </div>
 
         <h2>Your story's world features</h2>
+        <h3><a class="btn" href="/story/<%= story._id %>/features?ref=<%= back_link %>">Make Changes</a></h3>
         <div class="grid">
             <% for (story_talent of story.talents) { %>
                 <div class="card">
@@ -100,6 +74,7 @@
         </div>
 
         <h2>The arc of your story will contain</h2>
+        <h3><a class="btn" href="/story/<%= story._id %>/events?ref=<%= back_link %>">Make Changes</a></h3>
         <div class="grid story_select">
             <% for (story_event of story.events) { %>
                 <div class="card">
@@ -120,3 +95,5 @@
             <a class="btn" href="/story/<%= story._id %>/order">Add to Cart</a>
         </div>
     </div>
+
+<script src="/js/main.js"></script>

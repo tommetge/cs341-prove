@@ -1,0 +1,49 @@
+<link rel="stylesheet" href="/css/story.css">
+
+<%
+    function checkbox() {
+        var html = '<input id="' + item._id + '" name="' + item._id + '" type="checkbox"';
+        if (selected.includes(item._id.toString())) {
+            html = html + ' checked';
+        }
+        html = html + '>';
+        return html;
+    }
+
+    function postAction() {
+        var url = '/' + link_prefix + '/' + story._id + '/' + item_type;
+        if (typeof back_link !== 'undefined') {
+            url = url + '?ref=' + back_link;
+        }
+        return url;
+    }
+%>
+
+<form class="story_form" action="<%= postAction() %>" method="POST">
+    <%- include('../includes/csrf-input.ejs') %>
+
+    <h2><%= subtitle %></h2>
+
+    <div class="grid story_select">
+        <% for (item of items) { %>
+            <div class="card">
+                <%- checkbox() %>
+                <label for="<%= item._id %>">
+                    <header class="card__header">
+                        <h1 class="story_type_name"><%= item.name %></h1>
+                    </header>
+                    <div class="card__image story_select_img">
+                        <img src="<%= item.imageURL %>" alt="<%= item.caption %>">
+                    </div>
+                    <div class="card__content">
+                        <p class="story_description"><%= item.description %></p>
+                    </div>
+                </label>
+            </div>
+        <% } %>
+
+        <div class="story_select_button">
+            <button type="submit">Continue</button>
+        </div>
+    </div>
+</form>

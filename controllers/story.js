@@ -1,3 +1,4 @@
+require('../util/string');
 const dateFormat = require('../util/date');
 const mongodb = require('mongodb');
 
@@ -15,6 +16,8 @@ const Talent = require('../models/talent');
 const StoryCart = require('../models/story_cart');
 const User = require('../models/user');
 
+// Helpers
+
 function objectIdsFromBody(body) {
   const objectIds = new Array();
   for (var key in body) {
@@ -28,6 +31,110 @@ function objectIdsFromBody(body) {
 
   return objectIds;
 }
+
+// Most data types are similar enough that there are only 4 common
+// handlers. The route-specific handlers defer to these.
+
+// Render a page to select a single item from a list
+async function renderAddItem(req, res, next, klass, name, subtitle) {
+  const story = await Story.findOne({ _id: req.params.story_id });
+  if (!story) {
+    console.log('Story not found!');
+    return res.redirect('/story');
+  }
+
+  const items = await klass.find();
+
+  res.render('story/add-item', {
+    pageTitle: 'Add ' + name.capitalize(),
+    path: '/add-' + name,
+    link_prefix: 'story',
+    direct_link: true,
+    back_link: req.query.ref,
+    item_type: name,
+    items: items,
+    subtitle: subtitle,
+    story: story
+  });
+}
+
+// Renders a page to select multiple items from a list
+async function renderAddItems(req, res, next, klass, property_name, name, subtitle) {
+  const story = await Story.findOne({ _id: req.params.story_id });
+  if (!story) {
+    console.log('Story not found!');
+    return res.redirect('/story');
+  }
+
+  const items = await klass.find();
+  const selected = story[property_name].map(geo => { return geo.toString() });
+
+  res.render('story/add-items', {
+    pageTitle: 'Choose ' + name.capitalize(),
+    path: '/add-' + name,
+    link_prefix: 'story',
+    back_link: req.query.ref,
+    item_type: name,
+    items: items,
+    story: story,
+    selected: selected,
+    subtitle: subtitle
+  });
+}
+
+// Handles saving a single item (rendered via single selection)
+async function handlePostItem(req, res, next, klass, property_name, name, next_dest) {
+  const story = await Story.findOne({ _id: req.params.story_id });
+  if (!story) {
+    console.log('Story not found!');
+    return res.redirect('/story');
+  }
+
+  var item;
+  if (req.params[name + '_id']) {
+    item = await klass.findOne({ _id: req.params[name + '_id'] });
+  } else {
+    const objectIds = objectIdsFromBody(req.body);
+    item = await klass.findOne({ _id: {$in: objectIds}});
+  }
+
+  if (!item) {
+    console.log('Invalid item!');
+    return res.redirect('/story' + story._id);
+  }
+
+  story[property_name] = item._id;
+  await story.save();
+
+  if (req.query.ref) {
+    return res.redirect(req.query.ref);
+  }
+
+  res.redirect('/story/' + story._id.toString() + '/' + next_dest);
+}
+
+// Handles saving multiple items (rendered via multiple selection)
+async function handlePostItems(req, res, next, klass, property_name, name, next_dest) {
+  const story = await Story.findOne({ _id: req.params.story_id });
+  if (!story) {
+    console.log('Story not found!');
+    return res.redirect('/story');
+  }
+
+  const objectIds = objectIdsFromBody(req.body);
+  const items = await klass.find({ _id: {$in: objectIds}});
+
+  story[property_name] = items;
+  await story.save();
+
+  if (req.query.ref) {
+    return res.redirect(req.query.ref);
+  }
+
+  res.redirect('/story/' + story._id.toString() + '/' + next_dest);
+}
+
+// Route-specific handlers
 
 exports.getIndex = async (req, res, next) => {
   res.render('story/index', {
@@ -80,91 +187,22 @@ exports.postAddStory = async (req, res, next) => {
 }
 
 exports.getAddType = async (req, res, next) => {
-  const story = await Story.findOne({ _id: req.params.story_id });
-  if (!story) {
-    console.log('Story not found!');
-    return res.redirect('/story');
-  }
-
-  const story_types = await StoryType.find();
-
-  res.render('story/add-type', {
-    pageTitle: 'Add Type',
-    path: '/add-type',
-    story: story, 
-    story_types: story_types
-  });
+  return renderAddItem(req, res, next, StoryType, 'type', 'Select the kind of story you want to write');
 }
 
 exports.postAddType = async (req, res, next) => {
-  const story = await Story.findOne({ _id: req.params.story_id });
-  if (!story) {
-    console.log('Story not found!');
-    return res.redirect('/story');
-  }
-
-  var story_type;
-  if (req.params.type_id) {
-    story_type = await StoryType.findOne({ _id: req.params.type_id });
-  } else {
-    const objectIds = objectIdsFromBody(req.body);
-    story_type = await StoryType.findOne({ _id: {$in: objectIds}});
-  }
-
-  if (!story_type) {
-    console.log('Invalid story!');
-    return res.redirect('/story');
-  }
-
-  story.type = story_type;
-  await story.save();
-
-  res.redirect('/story/' + story._id.toString() + '/genre');
+  return handlePostItem(req, res, next, StoryType, 'type', 'type', 'genre');
 }
 
 exports.getAddGenre = async (req, res, next) => {
-  const story = await Story.findOne({ _id: req.params.story_id });
-  if (!story) {
-    console.log('Story not found!');
-    return res.redirect('/story');
-  }
-
-  const genres = await Genre.find();
-
-  res.render('story/add-genre', {
-    pageTitle: 'Add Genre',
-    path: '/add-genre',
-    story: story, 
-    genres: genres
-  });
+  return renderAddItem(req, res, next, Genre, 'genre', 'Select your story\'s genre');
 }
 
 exports.postAddGenre = async (req, res, next) => {
-  const story = await Story.findOne({ _id: req.params.story_id });
-  if (!story) {
-    console.log('Story not found!');
-    return res.redirect('/story');
-  }
-
-  var genre;
-  if (req.params.genre_id) {
-    genre = await Genre.findOne({ _id: req.params.genre_id });
-  } else {
-    const objectIds = objectIdsFromBody(req.body);
-    genre = await Genre.findOne({ _id: {$in: objectIds}});
-  }
-
-  if (!genre) {
-    console.log('Invalid story!');
-    return res.redirect('/story');
-  }
-
-  story.genre = genre;
-  await story.save();
-
-  res.redirect('/story/' + story._id.toString() + '/characters');
+  return handlePostItem(req, res, next, Genre, 'genre', 'genre', 'characters');
 }
 
+// Characters are unique - they have to be handled explicitly
 exports.getAddCharacters = async (req, res, next) => {
   const story = await Story.findOne({ _id: req.params.story_id });
   if (!story) {
@@ -201,141 +239,35 @@ exports.postAddCharacters = async (req, res, next) => {
 }
 
 exports.getAddPeriod = async (req, res, next) => {
-  const story = await Story.findOne({ _id: req.params.story_id });
-  if (!story) {
-    console.log('Story not found!');
-    return res.redirect('/story');
-  }
-
-  const periods = await Period.find();
-
-  res.render('story/add-period', {
-    pageTitle: 'Choose Time Period',
-    path: '/add-period',
-    story: story,
-    periods: periods
-  });
+  return renderAddItem(req, res, next, Period, 'period', 'Select your story\'s time period');
 }
 
 exports.postAddPeriod = async (req, res, next) => {
-  const story = await Story.findOne({ _id: req.params.story_id });
-  if (!story) {
-    console.log('Story not found!');
-    return res.redirect('/story');
-  }
-
-  var period;
-  if (req.params.period_id) {
-    period = await Period.findOne({ _id: req.params.period_id });
-  } else {
-    const objectIds = objectIdsFromBody(req.body);
-    period = await Period.findOne({ _id: {$in: objectIds}});
-  }
-
-  story.period = period;
-  await story.save();
-
-  res.redirect('/story/' + story._id.toString() + '/geos');
+  return handlePostItem(req, res, next, Period, 'period', 'period', 'geos');
 }
 
 exports.getAddGeos = async (req, res, next) => {
-  const story = await Story.findOne({ _id: req.params.story_id });
-  if (!story) {
-    console.log('Story not found!');
-    return res.redirect('/story');
-  }
-
-  const geos = await Geography.find();
-
-  res.render('story/add-geos', {
-    pageTitle: 'Choose Geography',
-    path: '/add-geos',
-    story: story,
-    geos: geos
-  });
+  return renderAddItems(req, res, next, Geography, 'geos', 'geos', 'Select the geographies to include in your story');
 }
 
 exports.postAddGeos = async (req, res, next) => {
-  const story = await Story.findOne({ _id: req.params.story_id });
-  if (!story) {
-    console.log('Story not found!');
-    return res.redirect('/story');
-  }
-
-  const objectIds = objectIdsFromBody(req.body);
-  const geos = await Geography.find({ _id: {$in: objectIds}});
-
-  story.geos = geos;
-  await story.save();
-
-  res.redirect('/story/' + story._id.toString() + '/features');
+  return handlePostItems(req, res, next, Geography, 'geos', 'geos', 'features');
 }
 
 exports.getAddFeatures = async (req, res, next) => {
-  const story = await Story.findOne({ _id: req.params.story_id });
-  if (!story) {
-    console.log('Story not found!');
-    return res.redirect('/story');
-  }
-
-  const talents = await Talent.find();
-
-  res.render('story/add-features', {
-    pageTitle: 'Choose World Features',
-    path: '/add-features',
-    story: story,
-    features: talents
-  });
+  return renderAddItems(req, res, next, Talent, 'talents', 'features', 'Select any special features of your story\'s world');
 }
 
 exports.postAddFeatures = async (req, res, next) => {
-  const story = await Story.findOne({ _id: req.params.story_id });
-  if (!story) {
-    console.log('Story not found!');
-    return res.redirect('/story');
-  }
-
-  const objectIds = objectIdsFromBody(req.body);
-  const talents = await Talent.find({ _id: {$in: objectIds}});
-
-  story.talents = talents;
-  await story.save();
-
-  res.redirect('/story/' + story._id.toString() + '/events');
+  return handlePostItems(req, res, next, Talent, 'talents', 'talents', 'events');
 }
 
 exports.getAddEvents = async (req, res, next) => {
-  const story = await Story.findOne({ _id: req.params.story_id });
-  if (!story) {
-    console.log('Story not found!');
-    return res.redirect('/story');
-  }
-
-  const events = await Event.find();
-
-  res.render('story/add-events', {
-    pageTitle: 'Add Events',
-    path: '/add-events',
-    story: story,
-    events: events
-  });
+  return renderAddItems(req, res, next, Event, 'events', 'events', 'Choose your story\'s major events');
 }
 
 exports.postAddEvents = async (req, res, next) => {
-  const story = await Story.findOne({ _id: req.params.story_id });
-  if (!story) {
-    console.log('Story not found!');
-    return res.redirect('/story');
-  }
-
-  const objectIds = objectIdsFromBody(req.body);
-  const events = await Event.find({ _id: { $in: objectIds }});
-
-  story.events = events;
-
-  await story.save();
-
-  res.redirect('/story/' + story._id + '/review');
+  return handlePostItems(req, res, next, Event, 'events', 'events', 'review');
 }
 
 exports.getStoryReview = async (req, res, next) => {

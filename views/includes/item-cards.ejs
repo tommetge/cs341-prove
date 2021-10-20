@@ -1,0 +1,14 @@
+<link rel="stylesheet" href="/css/story.css">
+
+<%- contentFor('body') %>
+<div class="story_content">
+    <h2><%= subtitle %></h2>
+
+    <div class="grid story_select">
+        <% for (item of items) { %>
+            <%- include('../includes/item-card.ejs') %>
+        <% } %>
+    </div>
+</div>
+
+<script src="/js/main.js"></script>
