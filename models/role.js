@@ -9,7 +9,12 @@ const roleSchema = new Schema({
   }
 });
 
-roleSchema.statics.createDefaultRoles = async function() {
+roleSchema.statics.createDefaultsIfNeeded = async function() {
+  const roles = await this.find();
+  if (roles.length > 0) {
+      return;
+  }
+
   var role = new this();
   role.name = 'Default';
   await role.save();

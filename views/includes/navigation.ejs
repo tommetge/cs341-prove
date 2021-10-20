@@ -3,26 +3,48 @@
     return '<a class="' + navClass + '" href="' + destPath + '">' + title + '</a>';
 } %>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.css">
+
 <header class="main-header">
-    <nav class="main-header__nav">
-        <ul class="main-header__item-list">
-            <li class="main-header__item"><%- navLink(path, '/', 'Shop') %></li>
-            <li class="main-header__item"><%- navLink(path, '/products', 'Products') %></li>
+    <nav class="main-header__nav navbar">
+        <div class="navbar-home">
+            <a href="/">CYOA</a>
+        </div>
+
+        <div class="navbar-links">
+            <%- navLink(path, '/story/add', 'New Story') %>
             <% if (isLoggedIn) { %>
-            <li class="main-header__item"><%- navLink(path, '/cart', 'Cart') %></li>
-            <li class="main-header__item"><%- navLink(path, '/orders', 'Orders') %></li>
-                <% if (user.role.name == "Admin") { %>
-            <li class="main-header__item"><%- navLink(path, '/admin/add-product', 'Add Product') %></li>
-            <li class="main-header__item"><%- navLink(path, '/admin/products', 'Admin Products') %></li>
+                <%- navLink(path, '/story/list', 'My Stories') %>
+                <%- navLink(path, '/story/orders', 'Orders') %>
+            <% } %>
+        </div>
+
+        <div class="navbar-right">
+            <% if (isLoggedIn && user.role.name == "Admin") { %>
+            <div class="dropdown">
+                <button class="dropbtn">Admin
+                    <i class="fa fa-caret-down"></i>
+                </button>
+                <div class="dropdown-content">
+                    <a href="/admin/types">Types</a>
+                    <a href="/admin/genres">Genres</a>
+                    <a href="/admin/periods">Periods</a>
+                    <a href="/admin/geographies">Geographies</a>
+                    <a href="/admin/features">Features</a>
+                    <a href="/admin/events">Events</a>
+                </div>
+            </div>
+            <% } %>
+
+            <div class="navbar-account">
+                <% if (isLoggedIn) { %>
+                <%- navLink(path, '/story/checkout', '<i class="fa fa-shopping-cart" style="font-size:16px;color:white"></i> Cart') %>
+                <%- navLink(path, '/logout', 'Logout') %>
+                <%- navLink(path, '/admin/adminify', '<i class="fa fa-user-shield" style="font-size:16px;color:white"></i> ') %>
+                <% } else { %>
+                <%- navLink(path, '/login', 'Login') %>
                 <% } %>
-            <% } %>
-        </ul>
-        <ul class="main-header__item-list">
-            <% if (isLoggedIn) { %>
-            <li class="main-header__item"><%- navLink(path, '/logout', 'Logout') %></li>
-            <% } else { %>
-            <li class="main-header__item"><%- navLink(path, '/login', 'Login') %></li>
-            <% } %>
-        </ul>
+            </div>
+        </div>
     </nav>
 </header>

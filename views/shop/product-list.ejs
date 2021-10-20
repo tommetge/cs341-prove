@@ -1,7 +1,6 @@
 <link rel="stylesheet" href="/css/product.css">
 
 <%- contentFor('body') %>
-    <main>
         <% if (prods.length > 0) { %>
             <div class="grid">
                 <% for (let product of prods) { %>
@@ -27,4 +26,3 @@
         <% } else { %>
             <h1>No Products Found!</h1>
         <% } %>
-    </main>

@@ -2,21 +2,19 @@
 <link rel="stylesheet" href="/css/auth.css">
 
 <%- contentFor('body') %>
-    <main>
-        <%- include('../includes/validation-msgs.ejs') %>
-        <form class="login-form" action="/login" method="POST">
-            <%- include('../includes/csrf-input.ejs') %>
-            <div class="form-control">
-                <label for="email">Email</label>
-                <input type="text" name="email" id="email" value="<%= (typeof oldBody !== 'undefined' && oldBody) ? oldBody.email : '' %>" autofocus>
-                <label for="password">Password</label>
-                <input type="password" name="password" id="password">
-            </div>
+    <%- include('../includes/validation-msgs.ejs') %>
+    <form class="login-form" action="/login" method="POST">
+        <%- include('../includes/csrf-input.ejs') %>
+        <div class="form-control">
+            <label for="email">Email</label>
+            <input type="text" name="email" id="email" value="<%= (typeof oldBody !== 'undefined' && oldBody) ? oldBody.email : '' %>" autofocus>
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password">
+        </div>
 
-            <div class="login-buttons">
-                <button class="btn" type="submit">Login</button>
-                <a href="/reset">Reset Password</a>
-                <a href="/signup">Sign up</a>
-            </div>
-        </form>
-    </main>
+        <div class="login-buttons">
+            <button class="btn" type="submit">Login</button>
+            <a href="/reset">Reset Password</a>
+            <a href="/signup">Sign up</a>
+        </div>
+    </form>

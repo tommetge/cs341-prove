@@ -1,0 +1,20 @@
+<link rel="stylesheet" href="/css/story.css">
+
+<%- contentFor('body') %>
+    <h1>My Stories</h1>
+
+    <div class="grid">
+    <% for (story of stories) { %>
+        <div class="card">
+            <header class="card__header">
+                <h1><a href="/story/<%= story._id.toString() %>/review" alt="<%= story.name %>" class="main-link clickable"><%= story.name %></a></h1>
+            </header>
+            <div class="card__image story_select_img">
+                <img src="/images/story-default.jpg" alt="<%= story.caption %>">
+            </div>
+            <div class="card__content">
+                <p class="story_description"><%= story.description %></p>
+            </div>
+        </div>
+    <% } %>
+    </div>

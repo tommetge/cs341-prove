@@ -1,0 +1,122 @@
+<link rel="stylesheet" href="/css/story.css">
+
+<%- contentFor('body') %>
+    <div class="story_review">
+        <h1>"<%= story.name %>"</h1>
+
+        <h2>Your story is a</h2>
+        <div class="grid story_select">
+            <div class="card">
+                <header class="card__header">
+                    <h1 class="story.type_name"><%= story.type.name %></h1>
+                </header>
+                <div class="card__image story_select_img">
+                    <img src="<%= story.type.imageURL %>" alt="<%= story.type.caption %>">
+                </div>
+                <div class="card__content">
+                    <p class="story_description"><%= story.type.description %></p>
+                </div>
+            </div>
+        </div>
+
+        <h2>set in a</h2>
+        <div class="grid">
+            <div class="card">
+                <header class="card__header">
+                    <h1 class="story.genre_name"><%= story.genre.name %></h1>
+                </header>
+                <div class="card__image story_select_img">
+                    <img src="<%= story.genre.imageURL %>" alt="<%= story.genre.caption %>">
+                </div>
+                <div class="card__content">
+                    <p class="story_description"><%= story.genre.description %></p>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="story_characters">
+            <h2>Your cast of characters include</h2>
+
+            <ul>
+            <% if (typeof characters === 'undefined' || characters.length == 0) { %>
+                <li>No characters!</li>
+            <% } else { %>
+                <% for (character of characters) { %>
+                    <li><%= character.role.name %>: <%= character.name %></li>
+                <% } %>
+            <% } %>
+            </ul>
+        </div>
+
+        <h2>and your story is set in</h2>
+        <div class="grid">
+            <div class="card">
+                <header class="card__header">
+                    <h1 class="story_period_name"><%= story.period.name %></h1>
+                </header>
+                <div class="card__image story_select_img">
+                    <img src="<%= story.period.imageURL %>" alt="<%= story.period.caption %>">
+                </div>
+                <div class="card__content">
+                    <p class="story_period_description"><%= story.period.description %></p>
+                </div>
+            </div>
+        </div>
+
+        <h2>The world has locations of note that include:</h2>
+        <div class="grid">
+            <% for (story_geo of story.geos) { %>
+                <div class="card">
+                    <header class="card__header">
+                        <h1 class="story_geo_name"><%= story_geo.name %></h1>
+                    </header>
+                    <div class="card__image story_select_img">
+                        <img src="<%= story_geo.imageURL %>" alt="<%= story_geo.caption %>">
+                    </div>
+                    <div class="card__content">
+                        <p class="story_geo_description"><%= story_geo.description %></p>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+
+        <h2>Your story's world features</h2>
+        <div class="grid">
+            <% for (story_talent of story.talents) { %>
+                <div class="card">
+                    <header class="card__header">
+                        <h1 class="story_talent_name"><%= story_talent.name %></h1>
+                    </header>
+                    <div class="card__image story_select_img">
+                        <img src="<%= story_talent.imageURL %>" alt="<%= story_talent.caption %>">
+                    </div>
+                    <div class="card__content">
+                        <p class="story_talnet_description"><%= story_talent.description %></p>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+
+        <h2>The arc of your story will contain</h2>
+        <div class="grid story_select">
+            <% for (story_event of story.events) { %>
+                <div class="card">
+                    <header class="card__header">
+                        <h1 class="story_event_name"><%= story_event.name %></h1>
+                    </header>
+                    <div class="card__image story_select_img">
+                        <img src="<%= story_event.imageURL %>" alt="<%= story_event.caption %>">
+                    </div>
+                    <div class="card__content">
+                        <p class="story_event_description"><%= story_event.description %></p>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+
+        <div class="story_select_button">
+            <a class="btn" href="/story/<%= story._id %>/order">Add to Cart</a>
+        </div>
+    </div>

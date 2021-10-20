@@ -1,0 +1,23 @@
+<link rel="stylesheet" href="/css/story.css">
+
+<%- contentFor('body') %>
+    <h1>Getting Started</h1>
+
+    <div class="form-control">
+        <form class="story_form" action="/story/add" method="POST">
+            <%- include('../includes/csrf-input.ejs') %>
+
+            <label for="story_name">Name Your Story:</label>
+            <input type="text" name="story_name" id="story_name">
+
+            <label for="story_caption">Your Story's Tagline:</label>
+            <input type="text" name="story_caption" id="story_caption">
+
+            <label for="story_description">Tell Us More:</label>
+            <textarea name="story_description" id="story_description"></textarea>
+
+            <div class="story_select_button">
+                <button type="submit">Save and Continue</button>
+            </div>
+        </form>
+    </div>

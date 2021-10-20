@@ -1,0 +1,31 @@
+<link rel="stylesheet" href="/css/story.css">
+
+<%- contentFor('body') %>
+    <form class="story_form" action="/story/<%= story._id %>/events" method="POST">
+        <%- include('../includes/csrf-input.ejs') %>
+
+        <h2>Choose your story's major events</h2>
+
+        <div class="grid story_select">
+            <% for (story_event of events) { %>
+                <div class="card">
+                    <input id="<%= story_event._id %>" name="<%= story_event._id %>" type="checkbox">
+                    <label for="<%= story_event._id %>">
+                        <header class="card__header">
+                            <h1 class="story_event_name"><%= story_event.name %></h1>
+                        </header>
+                        <div class="card__image story_select_img">
+                            <img src="<%= story_event.imageURL %>" alt="<%= story_event.caption %>">
+                        </div>
+                        <div class="card__content">
+                            <p class="story_event_description"><%= story_event.description %></p>
+                        </div>
+                    </label>
+                </div>
+            <% } %>
+
+            <div class="story_select_button">
+                <button type="submit">Finish My Story</button>
+            </div>
+        </div>
+    </form>

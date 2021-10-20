@@ -2,7 +2,6 @@
 <link rel="stylesheet" href="/css/auth.css">
 
 <%- contentFor('body') %>
-    <main>
         <%- include('../includes/validation-msgs.ejs') %>
         <form class="signup-form" action="/signup" method="POST">
             <%- include('../includes/csrf-input.ejs') %>
@@ -19,4 +18,3 @@
 
             <button class="btn" type="submit">Signup</button>
         </form>
-    </main>

@@ -5,7 +5,7 @@ let _db;
 
 exports.mongodbURI = function() {
 	if (process.env.NODE_ENV === 'development') {
-		return 'mongodb://192.168.1.6/cs341-prove';
+		return 'mongodb://192.168.1.6/cs341-prove-dev';
 	}
 
 	return 'mongodb+srv://tom:01dZgbm1iC79@cluster0.8b8rq.mongodb.net/cs341-prove?retryWrites=true&w=majority';

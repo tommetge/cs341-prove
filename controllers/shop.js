@@ -29,7 +29,7 @@ exports.getIndex = async (req, res, next) => {
   const products = await Product.find();
   res.render('shop/index', {
     prods: products,
-    pageTitle: 'Shop',
+    pageTitle: 'Create Your Own Adventure',
     path: '/'
   });
 }

@@ -1,0 +1,43 @@
+<link rel="stylesheet" href="/css/cart.css">
+
+<%- contentFor('body') %>
+  <main class="cart">
+    <% if (stories.length == 0) { %>
+
+    <h1>No stories in this order!</h1>
+
+    <% } else { %>
+
+    <ul>
+    <% for (story of stories) { %>
+      <li>
+        <div class="cart_image">
+          <a href="/story/<%= story._id %>">
+            <!-- TODO: Placeholder image -->
+            <%= story.name %>
+          </a>
+        </div>
+
+        <div class="cart_item_detail">
+          <h3><%= story.name %></h3>
+          <div class="cart_item_amount">
+            <div class="cart_item_qty">
+              <div class="cart_item_qty_value"><span><%= // stories.get(story._id) %></span></div>
+            </div>
+            <div class="cart_item_price">
+              <span>$<%= // (story_prices[story._id] * stories.get(story._id)).toFixed(2) %></span>
+            </div>
+          </div>
+        </div>
+      </li>
+    <% } %>
+    </ul>
+
+    <div class="checkout">
+      <div class="cart_total">
+        <h2>$<%= // price.toFixed(2) %></h2>
+      </div>
+    </div>
+
+    <% } %>
+  </main>

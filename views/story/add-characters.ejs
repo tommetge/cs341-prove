@@ -1,0 +1,38 @@
+<link rel="stylesheet" href="/css/story.css">
+<link rel="stylesheet" href="/css/forms.css">
+
+<%- contentFor('body') %>
+    <div class="story_characters">
+        <h2>Current Cast</h2>
+
+        <ul>
+        <% if (typeof characters === 'undefined' || characters.length == 0) { %>
+            <li>No characters yet - add some!</li>
+        <% } else { %>
+            <% for (character of characters) { %>
+                <li><%= character.role.name %>: <%= character.name %></li>
+            <% } %>
+        <% } %>
+        </ul>
+    </div>
+
+    <form class="story_form" action="/story/<%= story._id %>/characters" method="POST">
+        <%- include('../includes/csrf-input.ejs') %>
+
+        <h2>New Character</h2>
+
+        <div class="story_main_character form-control">
+            <label for="character_name">Name Your Main Character:</label>
+            <input type="text" name="character_name" id="character_name">
+            <label for="character_role">Role:</label>
+            <select name="character_role">
+                <% for (role of character_roles) { %>
+                    <option value="<%= role._id %>"><%= role.caption%></option>
+                <% } %>
+            </select>
+        </div>
+
+        <button type="submit">Add Character</button>
+    </form>
+
+    <a href="/story/<%= story._id %>/period" class="button">Continue to Time Period</a>

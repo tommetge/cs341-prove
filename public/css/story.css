@@ -1,0 +1,123 @@
+.main-content h1 {
+    text-align: center;
+}
+
+.story_form form {
+    width: 10rem;
+    max-width: 90%;
+    margin: auto;
+    display: block;
+}
+
+.story_form h2 {
+    text-align: center;
+}
+
+.story_form_button {
+    float: right;
+    width: 300px;
+}
+
+.story_review h2 {
+    text-align: center;
+}
+
+.story_characters {
+    width: 300px;
+    margin: auto;
+}
+
+.card {
+    width: 300px;
+    margin: 20px;
+}
+
+.card-linked {
+    cursor: pointer;
+}
+
+.card:hover .main-link {
+    color:  #1798ba;
+}
+
+.card input[type="checkbox"] {
+    margin-left: 1rem;
+    margin-top: 1rem;
+}
+
+.story_content h2 {
+    text-align: center;
+}
+
+.story_select label {
+    width: 300px;
+}
+
+.story_select_img {
+    padding-left: 40px;
+}
+
+.story_select_img img {
+    object-fit: cover;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+}
+
+.story_select_button {
+    text-align: center;
+    width: 100%;
+    margin: auto;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.story_select_button button {
+    font-family: itc-benguiat-condensed, serif;
+    font-weight: 400;
+    font-size: 1.5rem;
+    border-radius: 8px;
+}
+
+.card__header a {
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.5em;
+    color: black;
+}
+
+.card__content p {
+    margin: 1rem;
+    text-align: center;
+}
+
+.form-control {
+  margin: 1rem auto;
+  max-width: 400px;
+}
+
+.form-control label,
+.form-control input,
+.form-control textarea {
+  display: block;
+  width: 100%;
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+}
+
+.form-control input,
+.form-control textarea {
+  border: 1px solid #a1a1a1;
+  font: inherit;
+  border-radius: 2px;
+}
+
+.form-control input:focus,
+.form-control textarea:focus {
+  outline-color: #00695c;
+}
+
+.form-control input,
+.form-control textarea {
+    font-size: 1.75rem;
+}

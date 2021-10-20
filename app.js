@@ -14,6 +14,15 @@ const errorsController = require('./controllers/errors');
 const User = require('./models/user');
 const Cart = require('./models/cart');
 const Role = require('./models/role');
+const CharacterRole = require('./models/character_role');
+const StoryState = require('./models/story_state');
+const StoryType = require('./models/story_type');
+const Genre = require('./models/genre');
+const Period = require('./models/period');
+const Geography = require('./models/geography');
+const Talent = require('./models/talent');
+const Event = require('./models/event');
+const StoryCart = require('./models/story_cart');
 
 const sessionStore = new MongoSessionStore({
     uri: dbUtils.mongodbURI(),
@@ -47,6 +56,12 @@ app.use(async (req, res, next) => {
             await cart.save();
         }
         req.cart = cart;
+        let storyCart = await StoryCart.findOne({ user_id: req.session.user_id });
+        if (!storyCart) {
+            storyCart = new StoryCart({ user_id: req.session.user_id });
+            await storyCart.save();
+        }
+        req.story_cart = storyCart;
 
         res.locals.user = req.user;
         res.locals.isLoggedIn = true;
@@ -64,26 +79,38 @@ app.use(async (req, res, next) => {
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
+const storyRoutes = require('./routes/story');
 const authRoutes = require('./routes/auth')
 
 app.use('/admin', adminRoutes);
-app.use(shopRoutes);
+// app.use(shopRoutes);
+app.use(storyRoutes);
 app.use(authRoutes);
 
 app.get('/500', errorsController.get500);
 
 app.use(errorsController.get404);
 
-app.use(errorsController.handle500);
+if (process.env.NODE_ENV === 'production') {
+    app.use(errorsController.handle500);
+}
 
 async function setup() {
     await mongoose.connect(dbUtils.mongodbURI());
 	console.log('Connected!');
 
-    const roles = await Role.find();
-    if (roles.length == 0) {
-        await Role.createDefaultRoles();
-    }
+    // Admin roles
+    await Role.createDefaultsIfNeeded();
+
+    // Story data
+    await StoryState.createDefaultsIfNeeded();
+    await StoryType.createDefaultsIfNeeded();
+    await Genre.createDefaultsIfNeeded();
+    await CharacterRole.createDefaultsIfNeeded();
+    await Period.createDefaultsIfNeeded();
+    await Geography.createDefaultsIfNeeded();
+    await Talent.createDefaultsIfNeeded();
+    await Event.createDefaultsIfNeeded();
 }
 
 setup().then(result => {

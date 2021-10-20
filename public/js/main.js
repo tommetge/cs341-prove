@@ -1,16 +1,18 @@
-const backdrop = document.querySelector('.backdrop');
-const sideDrawer = document.querySelector('.mobile-nav');
-const menuToggle = document.querySelector('#side-menu-toggle');
+const cards = document.querySelectorAll(".card");
 
-function backdropClickHandler() {
-  backdrop.style.display = 'none';
-  sideDrawer.classList.remove('open');
+for (var card of cards) {
+  const mainLink = card.querySelector(".main-link");
+  const clickableElements = Array.from(card.querySelectorAll(".clickable"));
+
+  clickableElements.forEach((ele) =>
+    ele.addEventListener("click", (e) => e.stopPropagation())
+  );
+
+  card.addEventListener("click", (event) => {
+    const noTextSelected = !window.getSelection().toString();
+
+    if (noTextSelected) {
+      mainLink.click();
+    }
+  });
 }
-
-function menuToggleClickHandler() {
-  backdrop.style.display = 'block';
-  sideDrawer.classList.add('open');
-}
-
-backdrop.addEventListener('click', backdropClickHandler);
-menuToggle.addEventListener('click', menuToggleClickHandler);

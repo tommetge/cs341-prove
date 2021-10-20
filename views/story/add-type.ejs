@@ -1,0 +1,24 @@
+<link rel="stylesheet" href="/css/story.css">
+
+<%- contentFor('body') %>
+<div class="story_content">
+    <h2>Select the kind of story you want to write</h2>
+
+    <div class="grid story_select">
+        <% for (story_type of story_types) { %>
+            <div class="card card-linked">
+                <header class="card__header">
+                    <h1 class="story_type_name"><a href="/story/<%= story._id %>/type/<%= story_type._id %>" class="main-link clickable"><%= story_type.name %></a></h1>
+                </header>
+                <div class="card__image story_select_img">
+                    <img src="<%= story_type.imageURL %>" alt="<%= story_type.caption %>">
+                </div>
+                <div class="card__content">
+                    <p class="story_description"><%= story_type.description %></p>
+                </div>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+<script src="/js/main.js"></script>
