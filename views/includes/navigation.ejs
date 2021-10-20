@@ -12,10 +12,12 @@
         </div>
 
         <div class="navbar-links">
-            <%- navLink(path, '/story/add', 'New Story') %>
             <% if (isLoggedIn) { %>
+                <%- navLink(path, '/story/add', 'New Story') %>
                 <%- navLink(path, '/story/list', 'My Stories') %>
                 <%- navLink(path, '/story/orders', 'Orders') %>
+            <% } else { %>
+                <%- navLink(path, '/login', 'New Story') %>
             <% } %>
         </div>
 
@@ -38,9 +40,9 @@
 
             <div class="navbar-account">
                 <% if (isLoggedIn) { %>
-                <%- navLink(path, '/story/checkout', '<i class="fa fa-shopping-cart" style="font-size:16px;color:white"></i> Cart') %>
+                <%- navLink(path, '/story/checkout', '<i class="fa fa-shopping-cart" style="font-size:1.4rem;color:white"></i> Cart') %>
                 <%- navLink(path, '/logout', 'Logout') %>
-                <%- navLink(path, '/admin/adminify', '<i class="fa fa-user-shield" style="font-size:16px;color:white"></i> ') %>
+                <%- navLink(path, '/admin/adminify', '<i class="fa fa-user-shield" style="font-size:1.4rem;color:white"></i> ') %>
                 <% } else { %>
                 <%- navLink(path, '/login', 'Login') %>
                 <% } %>

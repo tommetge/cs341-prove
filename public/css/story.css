@@ -51,6 +51,11 @@
 
 .story_content h2 {
     text-align: center;
+    font-size: 3rem;
+}
+
+.card__header h2 {
+    font-size: 1.5rem;
 }
 
 .story_select label {
@@ -79,14 +84,14 @@
 .story_select_button button {
     font-family: itc-benguiat-condensed, serif;
     font-weight: 400;
-    font-size: 1.5rem;
+    font-size: 1.9rem;
     border-radius: 8px;
 }
 
 .card__header a {
     text-decoration: none;
     font-weight: bold;
-    font-size: 1.5em;
+    font-size: 1.9em;
     color: black;
 }
 
@@ -106,7 +111,7 @@
   display: block;
   width: 100%;
   margin-bottom: 0.5rem;
-  font-size: 1.5rem;
+  font-size: 1.9rem;
 }
 
 .form-control input,
@@ -123,5 +128,5 @@
 
 .form-control input,
 .form-control textarea {
-    font-size: 1.75rem;
+    font-size: 2.25rem;
 }

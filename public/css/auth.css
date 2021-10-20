@@ -11,10 +11,12 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    font-size: 1.25rem;
 }
 
 .login-buttons a {
     text-decoration: none;
+    font-size: 1.25rem;
 }
 
 .signup-form {
